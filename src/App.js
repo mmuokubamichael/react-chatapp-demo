@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { BrowserRouter,HashRouter } from "react-router-dom";
+import {connect} from 'react-redux';
+import * as actions from './store/actions/auth';
+
+import Rout from './components/rout';
+import WebSocketInstance from './websocket'
+
+
+
+class App extends React.Component{
+componentDidMount(){
+    this.props.onTryAutoSignUp()
+    
+    }
+
+    render(){
+        return(
+           
+                
+                <BrowserRouter>
+               
+                        <Rout />           
+                
+                </BrowserRouter>
+                
+           
+           
+        )
+    }
 }
 
-export default App;
+const mapDispatchToProps = dispatch =>{
+    return{
+        onTryAutoSignUp: () => dispatch(actions.authCheckState())
+    }
+}
+
+export default connect(null,mapDispatchToProps)(App);
