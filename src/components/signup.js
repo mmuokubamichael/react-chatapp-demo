@@ -5,7 +5,7 @@ import {
     Select, 
     Spin,
     Icon,  
-  
+    
     Checkbox,
     Button,
     AutoComplete,
@@ -159,6 +159,7 @@ const antIcon = <Icon type="loading" style={{ fontSize:24 }} spin />;
             {getFieldDecorator('password', {
               rules: [
                 {
+                  
                   required: true,
                   message: 'Please input your password!',
                 },
@@ -166,12 +167,13 @@ const antIcon = <Icon type="loading" style={{ fontSize:24 }} spin />;
                   validator: this.validateToNextPassword,
                 },
               ],
-            })(<Input.Password />)}
+            })(<Input type="password" />)}
           </Form.Item>
           <Form.Item label="Confirm Password" hasFeedback>
             {getFieldDecorator('confirm', {
               rules: [
                 {
+                 
                   required: true,
                   message: 'Please confirm your password!',
                 },
@@ -179,7 +181,7 @@ const antIcon = <Icon type="loading" style={{ fontSize:24 }} spin />;
                   validator: this.compareToFirstPassword,
                 },
               ],
-            })(<Input.Password onBlur={this.handleConfirmBlur} />)}
+            })(<Input type="password" onBlur={this.handleConfirmBlur} />)}
           </Form.Item>
           
           <Form.Item {...tailFormItemLayout}>

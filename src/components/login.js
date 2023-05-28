@@ -71,11 +71,11 @@ class NormalLoginForm extends React.Component {
 
           <form onSubmit={this.handleSubmit}>
               <div className="form-group">
-                <label for="username">Username:</label>
+                <label htmlFor="username">Username:</label>
                 <input type="text" onChange={this.emailChange} value={this.state.email} className="form-control" id="username" required />
               </div>
               <div className="form-group">
-                <label for="pwd">Password:</label>
+                <label htmlFor="pwd">Password:</label>
                 <input type="password" onChange={this.passwordChange} value={this.state.password} className="form-control" id="pwd" required />
               </div>
               <div className="checkbox">

@@ -48,7 +48,7 @@ delteimagerequest = (username,token)=>{
         "Content-Type":"multipart/form-data",
         Authorization: `Token ${token}`
       };
-      axios.delete(`http://127.0.0.1:8000/chat/deleteProfileImage/${username}/`)
+      axios.delete(`http://3.92.68.71/chat/deleteProfileImage/${username}/`)
       .then(res =>{
         
         console.log(res.data)
@@ -80,7 +80,7 @@ deleteProfileImage =()=>{
         "Content-Type":"multipart/form-data",
         Authorization: `Token ${token}`
       };
-      axios.put(`http://127.0.0.1:8000/chat/updateprofile/${username}/`,formData)
+      axios.put(`http://3.92.68.71/chat/updateprofile/${username}/`,formData)
       .then(res =>{
         
         console.log(res.data)
@@ -155,7 +155,7 @@ deleteProfileImage =()=>{
           "Content-Type":"application/json",
           Authorization: `Token ${token}`
         }
-        axios.get(`http://127.0.0.1:8000/chat/?username=${username}`)
+        axios.get(`http://3.92.68.71/chat/?username=${username}`)
         .then(res =>{
           console.log(res.data)
           this.setState({
@@ -169,7 +169,7 @@ deleteProfileImage =()=>{
         "Content-Type":"application/json",
         Authorization: `Token ${token}`
       }
-      axios.get(`http://127.0.0.1:8000/chat/friends/?username=${username}`)
+      axios.get(`http://3.92.68.71/chat/friends/?username=${username}`)
       .then(res =>{
         
         this.setState({
@@ -188,11 +188,11 @@ deleteProfileImage =()=>{
         "Content-Type":"application/json",
         Authorization: `Token ${token}`
       }
-      axios.get(`http://127.0.0.1:8000/chat/getprofileimage/${username}`)
+      axios.get(`http://3.92.68.71/chat/getprofileimage/${username}`)
       .then(res =>{
         console.log(res.data)
         const img = new Image();
-        img.src = `http://127.0.0.1:8000${res.data['image']}`
+        img.src = `${res.data['image']}`
         
         img.onload=()=>{
           console.log(img.height,img.width)
@@ -218,7 +218,7 @@ deleteProfileImage =()=>{
       "Content-Type":"application/json",
       Authorization: `Token ${token}`
     }
-    axios.get(`http://127.0.0.1:8000/chat/unreadchatmessage/${username}/`)
+    axios.get(`http://3.92.68.71/chat/unreadchatmessage/${username}/`)
     .then(res =>{
       
       this.setState({
@@ -253,7 +253,7 @@ deleteProfileImage =()=>{
       "Content-Type":"application/json",
       Authorization: `Token ${token}`
     };
-    axios.put(`http://127.0.0.1:8000/chat/acceptrequest/f${sender}/`,{
+    axios.put(`http://3.92.68.71/chat/acceptrequest/f${sender}/`,{
       "currentuser": username,
      /*
       "messages": [],
@@ -291,7 +291,7 @@ rejectFriendRequest = (username,token,sender)=>{
     "Content-Type":"application/json",
     Authorization: `Token ${token}`
   };
-  axios.post(`http://127.0.0.1:8000/chat/rejectrequest/f${sender}/`,{
+  axios.post(`http://3.92.68.71/chat/rejectrequest/f${sender}/`,{
     "currentuser": username,
    /*
     "messages": [],
@@ -489,7 +489,7 @@ rejectingRequest(sender){
               <div className="col-sm-3 col-xs-3 heading-avatar chatstyless">
                 <div className="heading-avatar-icon chatstyless">
                   {this.state.userContact['image']? 
-                  <img onClick={()=>this.setState({imageShow:true})} src={`http://127.0.0.1:8000${this.state.userContact['image']}`} />
+                  <img onClick={()=>this.setState({imageShow:true})} src={`${this.state.userContact['image']}`} />
                   :
                   <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" />
                    }
@@ -602,7 +602,7 @@ rejectingRequest(sender){
                           <>
                          {this.state.userContact['image']? 
                          <>
-                          <img  src={`http://127.0.0.1:8000${this.state.userContact['image']}`} />
+                          <img  src={`${this.state.userContact['image']}`} />
                           <a onClick={this.deleteProfileImage} className='text-danger float-start'>Delete photo</a>
                           </>
                           :
@@ -697,7 +697,7 @@ rejectingRequest(sender){
 <Modal show={this.state.imageShow} onHide={()=>this.setState({imageShow:false})} bsSize = "sm" centered>
   <Modal.Header closeButton>Profile Image</Modal.Header>
        <Modal.Body>
-          <img src={`http://127.0.0.1:8000${this.state.userContact['image']}`} alt="Profile" style={{ width: '100%', height: '100%' }} />
+          <img src={`${this.state.userContact['image']}`} alt="Profile" style={{ width: '100%', height: '100%' }} />
         </Modal.Body>
       
     </Modal>

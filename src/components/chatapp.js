@@ -76,12 +76,14 @@ class Chat extends React.Component{
         try{
             if(WebSocketInstance.state() === 1){
                 console.log("reconnecting socket")
+                console.log(this.props.match.params.chat)
                 WebSocketInstance.disconnect()
                 WebSocketInstance.connect(this.props.match.params.chat);
             }
         }
         catch(err){
             console.log("initializing socket")
+            console.log(this.props.match.params.chat)
             WebSocketInstance.connect(this.props.match.params.chat);
         }
         /*
@@ -210,7 +212,7 @@ unblockUserRequest = (username,token)=>{
     "Content-Type":"application/json",
     Authorization: `Token ${token}`
   };
-  axios.post(`http://127.0.0.1:8000/chat/unblockUser/${this.props.match.params.chat}/`,{
+  axios.post(`http://3.92.68.71/chat/unblockUser/${this.props.match.params.chat}/`,{
     "currentuser": username,
     /*
     "messages": [],
@@ -242,7 +244,7 @@ blockUserRequest = (username,token)=>{
     "Content-Type":"application/json",
     Authorization: `Token ${token}`
   };
-  axios.post(`http://127.0.0.1:8000/chat/blockUser/${this.props.match.params.chat}/`,{
+  axios.post(`http://3.92.68.71/chat/blockUser/${this.props.match.params.chat}/`,{
     "currentuser": username,
     /*
     "messages": [],
@@ -289,7 +291,7 @@ exitGroupRequest = (username,token)=>{
     "Content-Type":"application/json",
     Authorization: `Token ${token}`
   };
-  axios.post(`http://127.0.0.1:8000/chat/exitgroup/${this.props.match.params.chat}/`,{
+  axios.post(`http://3.92.68.71/chat/exitgroup/${this.props.match.params.chat}/`,{
     "currentuser": username,
    /*
     "messages": [],
@@ -319,7 +321,7 @@ UnrestrictGroupRequest = (username,token)=>{
     "Content-Type":"application/json",
     Authorization: `Token ${token}`
   };
-  axios.post(`http://127.0.0.1:8000/chat/unrestrictUser/${this.props.match.params.chat}/`,{
+  axios.post(`http://3.92.68.71/chat/unrestrictUser/${this.props.match.params.chat}/`,{
     "currentuser": username,
    /*
     "messages": [],
@@ -353,7 +355,7 @@ restrictGroupRequest = (username,token)=>{
     "Content-Type":"application/json",
     Authorization: `Token ${token}`
   };
-  axios.post(`http://127.0.0.1:8000/chat/restrictUser/${this.props.match.params.chat}/`,{
+  axios.post(`http://3.92.68.71/chat/restrictUser/${this.props.match.params.chat}/`,{
     "currentuser": username,
    /*
     "messages": [],
@@ -445,7 +447,7 @@ restrictUser = (user,admin)=>{
             <div className="col-sm-2 col-md-1 col-xs-3 heading-avatar chatstyless">
               <div className="heading-avatar-icon chatstyless">
               {this.state.navImage? 
-                  <img src={`http://127.0.0.1:8000${this.state.navImage}`} />
+                  <img src={`${this.state.navImage}`} />
                   :
                   <img src="https://www.pngitem.com/pimgs/m/148-1489698_the-main-group-group-chat-group-chat-icon.png" />  
                   }
@@ -479,7 +481,7 @@ restrictUser = (user,admin)=>{
           <div className="col-sm-2 col-md-1 col-xs-3 heading-avatar chatstyless">
             <div className="heading-avatar-icon chatstyless">
               {this.state.navImage? 
-                  <img src={`http://127.0.0.1:8000${this.state.navImage}`} />
+                  <img src={`${this.state.navImage}`} />
                   :
                   <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" />  
                   }
@@ -513,7 +515,7 @@ restrictUser = (user,admin)=>{
           <div className="col-sm-2 col-md-1 col-xs-3 heading-avatar chatstyless">
             <div className="heading-avatar-icon chatstyless">
               {this.state.navImage? 
-                  <img src={`http://127.0.0.1:8000${this.state.navImage}`} />
+                  <img src={`${this.state.navImage}`} />
                   :
                   <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" />  
                   }
@@ -549,7 +551,7 @@ restrictUser = (user,admin)=>{
         "Content-Type":"multipart/form-data",
         Authorization: `Token ${token}`
       };
-      axios.put(`http://127.0.0.1:8000/chat/updateprofile/${this.props.match.params.chat}/`,formData)
+      axios.put(`http://3.92.68.71/chat/updateprofile/${this.props.match.params.chat}/`,formData)
       .then(res =>{
         
         console.log(res.data)
@@ -617,7 +619,7 @@ sendonlineStatus = (username,token)=>{
     "Content-Type":"application/json",
     Authorization: `Token ${token}`
   };
-  axios.put(`http://127.0.0.1:8000/chat/sendonlinechatstatus/${this.props.match.params.chat}/`,{
+  axios.put(`http://3.92.68.71/chat/sendonlinechatstatus/${this.props.match.params.chat}/`,{
     "currentuser": username,
    /*
     "messages": [],
@@ -665,7 +667,7 @@ inerval=setInterval(() => {
         "Content-Type":"application/json",
         Authorization: `Token ${token}`
       };
-      axios.put(`http://127.0.0.1:8000/chat/updatechat/${this.props.match.params.chat}/`,{
+      axios.put(`http://3.92.68.71/chat/updatechat/${this.props.match.params.chat}/`,{
         "participants": username,
        /*
         "messages": [],
@@ -693,7 +695,7 @@ inerval=setInterval(() => {
       "Content-Type":"application/json",
       Authorization: `Token ${token}`
     };
-    axios.put(`http://127.0.0.1:8000/chat/friendrequest/${this.props.match.params.chat}/`,{
+    axios.put(`http://3.92.68.71/chat/friendrequest/${this.props.match.params.chat}/`,{
       "currentuser": username,
      /*
       "messages": [],
@@ -721,7 +723,7 @@ acceptsFriendRequest = (username,token)=>{
     "Content-Type":"application/json",
     Authorization: `Token ${token}`
   };
-  axios.put(`http://127.0.0.1:8000/chat/acceptrequest/${this.props.match.params.chat}/`,{
+  axios.put(`http://3.92.68.71/chat/acceptrequest/${this.props.match.params.chat}/`,{
     "currentuser": username,
    /*
     "messages": [],
@@ -750,7 +752,7 @@ deletingFriendRequest = (username,token)=>{
     "Content-Type":"application/json",
     Authorization: `Token ${token}`
   };
-  axios.post(`http://127.0.0.1:8000/chat/deleterequest/${this.props.match.params.chat}/`,{
+  axios.post(`http://3.92.68.71/chat/deleterequest/${this.props.match.params.chat}/`,{
     "currentuser": username,
    /*
     "messages": [],
@@ -1032,16 +1034,7 @@ sendFrendRequest = (e)=>{
      
 
     render(){
-      if(!this.props.token){
-        this.props.history("/login/")
-      }
-        
-         /*
-        const renderChat = this.state.messages.map(msg => {
-            return <Chathandler key={msg.id} {...msg} />
-        })
-        */
-        //<Addchat isVissible={false} close={()=> this.props.hideChatpopup()} /> 
+      if(this.props.token){
         const msg = this.state.messages;
         return(
           <>
@@ -1159,7 +1152,7 @@ sendFrendRequest = (e)=>{
                         <>
                         {this.state.navImage? 
                           <>
-                          <img src={`http://127.0.0.1:8000${this.state.navImage}`} />
+                          <img src={`${this.state.navImage}`} />
                          <a href='#' className='text-danger float-start'>Delete photo</a>
                           </>
                         :
@@ -1182,7 +1175,7 @@ sendFrendRequest = (e)=>{
                       
                       <div className='col-xs-9'>
                       <div className="form-group">
-                          <label for="usr">Channels Name:</label>
+                          <label htmlFor="usr">Channels Name:</label>
                           <input type="text" onChange={(e)=>this.setState({chat_name:e.target.value})} value={this.state.chat_name} className="form-control" id="usr" required />
                         </div>
                       <label htmlFor="fileInput" className="custom-file-upload">
@@ -1219,7 +1212,7 @@ sendFrendRequest = (e)=>{
                      
                         {this.state.navImage? 
                           <>
-                          <img src={`http://127.0.0.1:8000${this.state.navImage}`} />
+                          <img src={`${this.state.navImage}`} />
                         
                           </>
                         :
@@ -1257,7 +1250,7 @@ sendFrendRequest = (e)=>{
                      
                         {data["image"]? 
                           <>
-                          <img src={`http://127.0.0.1:8000${data["image"]}`} />
+                          <img src={`${data["image"]}`} />
                         
                           </>
                         :
@@ -1439,6 +1432,17 @@ sendFrendRequest = (e)=>{
           </>
            
         )
+      }else{
+        this.props.history("/login/")
+      }
+        
+         /*
+        const renderChat = this.state.messages.map(msg => {
+            return <Chathandler key={msg.id} {...msg} />
+        })
+        */
+        //<Addchat isVissible={false} close={()=> this.props.hideChatpopup()} /> 
+        
     }
 
 }

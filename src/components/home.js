@@ -40,20 +40,22 @@ class Chat extends React.Component{
             return <Chathandler key={msg.id} {...msg} />
         })
         */
-        if(!this.props.token){
+        if(this.props.token){
+            return(
+                <div className="container app chatstyless">
+                <div className="row app-one chatstyless">
+                    
+                    
+                <Sidepanel history={this.props.history} />
+                 
+                </div>
+              </div>
+            )
+          }else{
             this.props.history("/login/")
           }
        
-        return(
-            <div className="container app chatstyless">
-            <div className="row app-one chatstyless">
-                
-                
-            <Sidepanel history={this.props.history} />
-             
-            </div>
-          </div>
-        )
+        
     }
 
 }

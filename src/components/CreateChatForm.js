@@ -28,7 +28,7 @@ class CreateChat extends React.Component {
           "Content-Type":"application/json",
           Authorization: `Token ${token}`
         };
-        axios.post(`http://127.0.0.1:8000/chat/createchat/`,{
+        axios.post(`http://3.92.68.71/chat/createchat/`,{
           "participants": combine,
           "messages": [],
           "chat_name": this.state.channelName,

@@ -68,7 +68,7 @@ const Chathandler = (props)=>{
           <div className="message-text chatstyless" style={{color: 'green'}} >
               <div className="heading-avatar-icon chatstyless">
               {props.prof_image? 
-                  <img src={`http://127.0.0.1:8000${props.prof_image}`} />
+                  <img src={`${props.prof_image}`} />
                   :
                   <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" />  
                   }
