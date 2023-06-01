@@ -10,6 +10,7 @@ const antIcon = <Icon type="loading" style={{ fontSize:24 }} spin />;
 
 
 class NormalLoginForm extends React.Component {
+  
   constructor(props){
     super(props)
     

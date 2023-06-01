@@ -34,10 +34,11 @@ class Sidepanel extends React.Component{
           imageDimension:{height:50,width:50},
           profilechatimage:false,
           imagechat:null,
-          chatname:null
+          chatname:null,
+          isLoading: false
 
         }
-
+        this.interval = null;
     }
 
 delteimagerequest = (username,token)=>{
@@ -84,9 +85,10 @@ deleteProfileImage =()=>{
       .then(res =>{
         
         console.log(res.data)
-        this.setState({openModal:false})
-        window.location.reload();
         
+        window.location.reload();
+        this.setState({openModal:false})
+        this.setState({isLoading: false})
        
       })
       .catch(e=>{
@@ -96,6 +98,7 @@ deleteProfileImage =()=>{
   
     uploadProfileImage = (e)=>{
       e.preventDefault();
+      this.setState({isLoading:true})
       this.uploadimagerequest(this.props.username,this.props.token)
     }
 
@@ -230,10 +233,23 @@ deleteProfileImage =()=>{
     }
       )
 }
-  
-   inerval=setInterval(() => {
-        this.getunreadChannelmessage(localStorage.getItem("username"),localStorage.getItem("token"))
-      }, 3000);
+
+/*
+componentWillUnmount() {
+  this.stopFetching(); // Stop the interval fetch request
+}
+*/
+componentWillUnmount() {
+  this.stopFetching(); // Stop the interval fetch request
+}
+startFetching = ()=> {
+  this.interval=setInterval(() => {
+    this.getunreadChannelmessage(localStorage.getItem("username"),localStorage.getItem("token"))
+  }, 3000);
+}
+stopFetching =()=>{
+  clearInterval(this.interval);
+}
 
   renderUnreadmsgNo = (num)=>{
     if(num>0){
@@ -264,7 +280,7 @@ deleteProfileImage =()=>{
     .then(res =>{
       
       this.props.history(`/${res.data.slug}/`)
-      
+      this.setState({isLoading:false})
      
     })
     .catch(e=>{
@@ -276,6 +292,7 @@ deleteProfileImage =()=>{
   acceptsRequest(sender){
     return event =>{
       event.preventDefault();
+      this.setState({isLoading: true})
       this.acceptsFriendRequest(this.props.username,this.props.token,sender)
     }
   }
@@ -302,6 +319,7 @@ rejectFriendRequest = (username,token,sender)=>{
   .then(res =>{
     
     this.props.history(`/`)
+    this.setState({isLoading: false})
     
    
   })
@@ -313,16 +331,20 @@ rejectFriendRequest = (username,token,sender)=>{
 rejectingRequest(sender){
   return event =>{
     event.preventDefault();
+    this.setState({isLoading: true})
     this.rejectFriendRequest(this.props.username,this.props.token,sender)
   }
 }
 
 
     componentDidMount(){
+      
       if(this.props.username != null && this.props.token != null){
         this.getUserProfile(this.props.username,this.props.token)
         this.getUserChats(this.props.username,this.props.token)
         this.getUserFriends(this.props.username,this.props.token)
+        this.startFetching()
+        
 
       }
     }
@@ -448,10 +470,20 @@ rejectingRequest(sender){
                   </span>
                   </NavLink>
                   <div className="row">
-                  
+                  {this.state.isLoading ? (                                                                   
+                     <>
+                     <div className="col-xs-6" ><form onSubmit={this.rejectingRequest(data.sender["user"])}><button className='btn btn-link' type='submit' disabled><i className="fa fa-spinner fa-spin fa-2x  pull-right"  aria-hidden="true"></i></button></form></div>
+                        <div className="col-xs-6" ><form onSubmit={this.acceptsRequest(data.sender["user"])}><button className='btn btn-link' type='submit' disabled><i className="fa fa-spinner fa-spin fa-2x  pull-right"  aria-hidden="true"></i></button></form></div>
+                       
+                     </>
+                  ):
+                  <>
                   <div className="col-xs-6" ><form onSubmit={this.rejectingRequest(data.sender["user"])}><button className='btn btn-link' type='submit'><i className="fa fa-thumbs-down fa-2x  pull-right"  aria-hidden="true"></i></button></form></div>
                       <div className="col-xs-6" ><form onSubmit={this.acceptsRequest(data.sender["user"])}><button className='btn btn-link' type='submit' ><i className="fa fa-thumbs-up fa-2x  pull-right"  aria-hidden="true"></i></button></form></div>
                     
+                  </>
+                  }
+                  
                   </div>
                   </div>
                   
@@ -475,8 +507,9 @@ rejectingRequest(sender){
     render(){
         const chats= this.state.chats
         const friend= this.state.friends
+        const { isLoading } = this.state;
        
-        console.log(this.state.unreadChannelmsg)
+        
         
         
         return(
@@ -500,15 +533,15 @@ rejectingRequest(sender){
                 <div className="dropdown">
                     <button className="" type="button" data-toggle="dropdown"><i className="fa fa-ellipsis-v fa-2x  pull-right" aria-hidden="true"></i></button>
                     <ul className="dropdown-menu">
+                      <li><a onClick={()=> this.openChatPopup()}>create group</a></li>
                       <li><a onClick={()=>this.setState({openModal:true})} href="#">Edit profile</a></li>
                       <li><a onClick={()=>this.props.logout()}>logout</a></li>
-                      
                     </ul>
                 </div>
                 
               </div>
               <div className="col-sm-2 col-xs-2 heading-compose  pull-right chatstyless">
-                <i className="fa fa-comments fa-2x  pull-right" onClick={()=> this.openChatPopup()} aria-hidden="true"></i>
+                
               </div>
             </div>
     
@@ -578,7 +611,7 @@ rejectingRequest(sender){
              <Addchat showaddchat={this.props.showaddchat} hide={()=> this.closeChatPopup()} history={this.props.history} />
              <Modal
                   show={this.state.openModal}
-                  onHide={()=>this.setState({openModal:false,cropedImage:null})}
+                  onHide={()=>this.setState({openModal:false,cropedImage:null,isLoading: false})}
                   container={this}
                   aria-labelledby="contained-modal-title"
                   bsSize = "sm"
@@ -588,6 +621,58 @@ rejectingRequest(sender){
                       {this.props.username}
                     </Modal.Title>
                   </Modal.Header>
+                  {isLoading ? (
+                    <>
+                    <ModalBody >
+                    <div className='row'>
+                      <div className='col-xs-3'>
+                      <div className="heading-avatar-icon chatstyless">
+                        {this.state.cropedImage? 
+                        <>
+                        <img src={`${this.state.cropedImage}`} />
+                        <a href='#' className='text-danger float-start' aria-disabled >Delete photo</a>
+                        </>
+                        
+                        :
+                          <>
+                         {this.state.userContact['image']? 
+                         <>
+                          <img  src={`${this.state.userContact['image']}`} />
+                          <a onClick={this.deleteProfileImage} className='text-danger float-start' aria-disabled >Delete photo</a>
+                          </>
+                          :
+                          <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" />
+                          }
+                          </>
+                        }
+                         
+                        
+                        
+                      </div>
+                      
+                      </div>
+                      
+                      <div className='col-xs-9'>
+                      
+                      <label htmlFor="fileInput" className="custom-file-upload">
+                        <input id="fileInput" onChange={this.handleCropChange} type="file" disabled/>
+                        
+                      </label>
+                      </div>
+                      
+                    </div>
+                  
+                  </ModalBody>
+                  <Modal.Footer>
+                  {this.state.cropedImage && 
+                    <form onSubmit={this.uploadProfileImage}>
+                    <button type='submit' className='btn btn-primary' disabled><i class="fa fa-spinner fa-spin" ></i></button>
+                    </form>
+                     }         
+                  </Modal.Footer>
+                    </>
+                  ):
+                  <>
                   <ModalBody >
                     <div className='row'>
                       <div className='col-xs-3'>
@@ -635,6 +720,9 @@ rejectingRequest(sender){
                     </form>
                      }         
                   </Modal.Footer>
+                  </>
+                  }
+                  
               </Modal>
 
 

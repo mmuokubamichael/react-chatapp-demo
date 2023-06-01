@@ -63,6 +63,9 @@ const antIcon = <Icon type="loading" style={{ fontSize:24 }} spin />;
     render() {
       const { getFieldDecorator } = this.props.form;
       const { autoCompleteResult } = this.state;
+      if(this.props.token){
+        this.props.history("/")
+      }
   
       const formItemLayout = {
         labelCol: {

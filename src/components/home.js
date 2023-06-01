@@ -4,7 +4,7 @@ import Sidepanel from './sidepanel'
 import WebSocketInstance from '../websocket'
 import Chathandler from './handlechat'
 import {connect} from 'react-redux';
-
+import { redirect } from 'react-router-dom';
 
 
 

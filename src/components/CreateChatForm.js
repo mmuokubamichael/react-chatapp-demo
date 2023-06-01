@@ -8,14 +8,16 @@ class CreateChat extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        channelName:''
+        channelName:'',
+        isLoading: false
       }
   
       
     }
     handleChange = (event)=>{
         this.setState({
-            channelName: event.target.value
+            channelName: event.target.value,
+            
         })
       }
     
@@ -36,12 +38,14 @@ class CreateChat extends React.Component {
 
         })
         .then(res =>{
-          console.log(res.data.chat_slug)
+          
           this.setState({
             channelName:''
           })
-          this.props.hideChatpopup()
+          
           this.props.history(`/${res.data.chat_slug}/`)
+          this.props.hideChatpopup()
+          this.setState({isLoading: false})
         })
         .catch(e=>{
           console.log(e.response)
@@ -50,21 +54,45 @@ class CreateChat extends React.Component {
     
     submitCreatechat = (e)=>{
       e.preventDefault();
-     
+     this.setState({isLoading: true})
       this.creatingChat(this.props.username,this.props.token)
 
     }
    
   
     render() {
+      const { isLoading } = this.state;
       return (
-        <Form inline onSubmit={this.submitCreatechat} >
+      
+       
+         <Form inline onSubmit={this.submitCreatechat} >
+        
+        {isLoading ? (
+          <>
+          <FormGroup controlId="formInlineName" >
+          <ControlLabel>channel Name</ControlLabel>{' '}
+          <FormControl type="text" onChange={this.handleChange} placeholder="" bsClass="mx-auto" value={this.state.channelName} disabled  />
+        </FormGroup>{' '}
+        <Button type="submit" disabled><i class="fa fa-spinner fa-spin" ></i></Button>
+          </>
+          
+        ):
+        <>
         <FormGroup controlId="formInlineName" >
           <ControlLabel>channel Name</ControlLabel>{' '}
           <FormControl type="text" onChange={this.handleChange} placeholder="" bsClass="mx-auto" value={this.state.channelName} required  />
         </FormGroup>{' '}
         <Button type="submit">Create</Button>
+        </>
+        
+        }
+        
       </Form>
+       
+       
+      
+        
+       
       )
     }
   }

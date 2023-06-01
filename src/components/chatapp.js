@@ -9,7 +9,7 @@ import Cropper from 'react-easy-crop';
 import {Modal,Button,ModalBody,ListGroup,ListGroupItem} from 'react-bootstrap'
 import getCroppedImg  from './utils/cropimage'
 import * as actions from '../store/actions/nav'
-import { Alert } from 'react-bootstrap';
+import { Alert, } from 'react-bootstrap';
 import axios from 'axios';
 
 
@@ -17,7 +17,7 @@ import axios from 'axios';
 
 
 class Chat extends React.Component{
-    
+  messagesEndRef = React.createRef();
     constructor(props){
 
         super(props)
@@ -59,10 +59,12 @@ class Chat extends React.Component{
         navigate:null,
         objectexist:null,
         chaterror:null,
+        isLoading: false
 
         
 
       };
+      this.interval = null
         this.waitForSocketConnetion(()=>{
             WebSocketInstance.addCallbacks(this.setMessages.bind(this),this.addMessage.bind(this));
             const username = localStorage.getItem("username")
@@ -222,16 +224,17 @@ unblockUserRequest = (username,token)=>{
   })
   .then(res =>{
     
-    this.setState({unblockUserModal:false})
+    
     window.location.reload();
-    
-    
+    this.setState({unblockUserModal:false})
+    this.setState({isLoading:false})
   })
   .catch(e=>{
     console.log(e.response)
   })
 }
 sendunBlockUserrequest =()=>{
+  this.setState({isLoading:true})
   this.unblockUserRequest(this.props.username,this.props.token)
 }
   
@@ -254,9 +257,10 @@ blockUserRequest = (username,token)=>{
   })
   .then(res =>{
     
-    this.setState({blockUserModal:false})
-    window.location.reload();
     
+    window.location.reload();
+    this.setState({blockUserModal:false})
+    this.setState({isLoading:false})
     
   })
   .catch(e=>{
@@ -264,6 +268,7 @@ blockUserRequest = (username,token)=>{
   })
 }   
 sendBlockUserrequest =()=>{
+  this.setState({isLoading:true})
   this.blockUserRequest(this.props.username,this.props.token)
 }
 
@@ -300,8 +305,9 @@ exitGroupRequest = (username,token)=>{
   */
   })
   .then(res =>{
-    console.log(res.data)
+    
     this.setState({exitGroupModal:false})
+    this.setState({isLoading: true})
     this.props.history('/')
     
    
@@ -337,6 +343,7 @@ UnrestrictGroupRequest = (username,token)=>{
     }
     
     this.setState({unrestrictUserModal:false})
+    this.setState({isLoading: false})
     this.setState({restrict_user:restricted})
     
    
@@ -369,6 +376,7 @@ restrictGroupRequest = (username,token)=>{
     restricted.push(res.data.restricted)
     */
     this.setState({restrictUserModal:false})
+    this.setState({isLoading: false})
     this.setState({restrict_user: [...this.state.restrict_user,res.data.restricted]})
     
     
@@ -381,12 +389,15 @@ restrictGroupRequest = (username,token)=>{
 }
 
 exitChanel = ()=>{
+  this.setState({isLoading: true})
   this.exitGroupRequest(this.props.username,this.props.token)
 }
 sendUnRestrictrequest =()=>{
+  this.setState({isLoading: true})
   this.UnrestrictGroupRequest(this.state.userToRestrict,this.props.token)
 }
 sendRestrictrequest =()=>{
+    this.setState({isLoading: true})
     this.restrictGroupRequest(this.state.userToRestrict,this.props.token)
 }
 
@@ -443,17 +454,23 @@ restrictUser = (user,admin)=>{
       if(this.state.cat === "c"){
           return(
             <div className="row heading chatstyless">
-
+              
+            <div className="col-sm-1 col-xs-1 heading-compose  pull-left chatstyless">
+              <i className="fa fa-angle-double-left fa-2x  pull-left" onClick={()=> this.props.history('/')} aria-hidden="true"></i>
+            </div>
             <div className="col-sm-2 col-md-1 col-xs-3 heading-avatar chatstyless">
+            
               <div className="heading-avatar-icon chatstyless">
+                
               {this.state.navImage? 
+              
                   <img src={`${this.state.navImage}`} />
                   :
                   <img src="https://www.pngitem.com/pimgs/m/148-1489698_the-main-group-group-chat-group-chat-icon.png" />  
                   }
               </div>
             </div>
-            <div className="col-sm-8 col-xs-7 heading-name chatstyless">
+            <div className="col-sm-7 col-xs-6 heading-name chatstyless">
               <a className="heading-name-meta">{this.state.chat_name}
               </a>
               <span className="heading-online chatstyle">Online</span>
@@ -477,7 +494,9 @@ restrictUser = (user,admin)=>{
       if(this.state.cat === "_"){
         return(
           <div className="row heading chatstyless">
-
+          <div className="col-sm-1 col-xs-1 heading-compose  pull-left chatstyless">
+            <i className="fa fa-angle-double-left fa-2x  pull-left" onClick={()=> this.props.history('/')} aria-hidden="true"></i>
+          </div>
           <div className="col-sm-2 col-md-1 col-xs-3 heading-avatar chatstyless">
             <div className="heading-avatar-icon chatstyless">
               {this.state.navImage? 
@@ -487,7 +506,7 @@ restrictUser = (user,admin)=>{
                   }
             </div>
           </div>
-          <div className="col-sm-8 col-xs-7 heading-name chatstyless">
+          <div className="col-sm-7 col-xs-6 heading-name chatstyless">
             <a className="heading-name-meta">{this.state.userFriend}
             </a>
             <span className="heading-online chatstyle">Online</span>
@@ -511,7 +530,9 @@ restrictUser = (user,admin)=>{
       if(this.state.cat === "f"){
         return(
           <div className="row heading chatstyless">
-
+          <div className="col-sm-1 col-xs-1 heading-compose  pull-left chatstyless">
+            <i className="fa fa-angle-double-left fa-2x  pull-left" onClick={()=> this.props.history('/')} aria-hidden="true"></i>
+          </div>
           <div className="col-sm-2 col-md-1 col-xs-3 heading-avatar chatstyless">
             <div className="heading-avatar-icon chatstyless">
               {this.state.navImage? 
@@ -555,8 +576,10 @@ restrictUser = (user,admin)=>{
       .then(res =>{
         
         console.log(res.data)
-        this.setState({openModal:false})
+        
         window.location.reload();
+        this.setState({openModal:false})
+        this.setState({isLoading:false})
         
        
       })
@@ -566,7 +589,8 @@ restrictUser = (user,admin)=>{
     }
   
     uploadChannelProfile = (e)=>{
-      e.preventDefault();
+      e.preventDefault()
+      this.setState({isLoading:true})
       this.uploadimagerequest(this.props.username,this.props.token)
     }
 
@@ -635,9 +659,31 @@ sendonlineStatus = (username,token)=>{
     console.log(e.response)
   })
 }
-inerval=setInterval(() => {
-  this.sendonlineStatus(localStorage.getItem("username"),localStorage.getItem("token"))
-}, 2000);
+/*
+componentDidMount(){
+  this.startFetching();
+}
+*/
+componentDidMount(){
+  this.startFetching();
+  
+}
+componentWillUnmount(){
+  this.stopFetching();
+}
+startFetching = ()=> {
+  
+  this.interval=setInterval(() => {
+    console.log("am sending oooooooooooo")
+    this.sendonlineStatus(localStorage.getItem("username"),localStorage.getItem("token"))
+  }, 2000);
+}
+stopFetching =()=>{
+  clearInterval(this.interval);
+}
+
+
+
 
     messageChangeHandler = (events)=>{
         this.setState({message: events.target.value})
@@ -678,6 +724,7 @@ inerval=setInterval(() => {
       .then(res =>{
         
         this.props.history(`/${res.data.chat_slug}`)
+        this.setState({isLoading: false})
         
        
       })
@@ -704,9 +751,9 @@ inerval=setInterval(() => {
     */
     })
     .then(res =>{
-      console.log(res.data)
-      this.props.history(`/f${res.data.reciever["user"]}`)
       
+      this.props.history(`/f${res.data.reciever["user"]}`)
+      this.setState({isLoading: false})
      
     })
     .catch(e=>{
@@ -732,8 +779,9 @@ acceptsFriendRequest = (username,token)=>{
   */
   })
   .then(res =>{
-    console.log(res.data.slug)
+    
     this.props.history(`/${res.data.slug}/`)
+    this.setState({isLoading: false})
     
    
   })
@@ -761,8 +809,9 @@ deletingFriendRequest = (username,token)=>{
   */
   })
   .then(res =>{
-    console.log(res.data)
+    
     this.props.history(`/f${res.data.reciever.user}`)
+    this.setState({isLoading: false})
     
    
   })
@@ -773,26 +822,30 @@ deletingFriendRequest = (username,token)=>{
 
 cancelFriendRequest =(e)=>{
   e.preventDefault();
+  this.setState({isLoading: true})
   this.deletingFriendRequest(this.props.username,this.props.token)
 }
 
 acceptFriendRequest=(e)=>{
   e.preventDefault();
+  this.setState({isLoading: true})
   this.acceptsFriendRequest(this.props.username,this.props.token)
 }
 
 joinChannel = (e)=>{
   e.preventDefault();
-  
+  this.setState({isLoading: true})
   this.updateJoinChannel(this.props.username,this.props.token)
 }
 
 sendFrendRequest = (e)=>{
   e.preventDefault();
+  this.setState({isLoading: true})
   this.sendingFriendRequest(this.props.username,this.props.token)
 
 
 }
+/*
   scrollToBottom = () => {
       this.messagesEnd.scrollIntoView({ behavior: "smooth" });
     }
@@ -805,6 +858,23 @@ sendFrendRequest = (e)=>{
     componentDidUpdate() {
       this.scrollToBottom();
     }
+*/
+
+
+componentDidUpdate() {
+  
+  this.scrollToBottom();
+  
+}
+
+scrollToBottom() {
+
+  if (this.messagesEndRef.current) {
+    this.messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  }
+  
+}
+
     sendMesaageRender = (data)=>{
       if(data.cat === "f"){
         if(data.userNotExists){
@@ -819,7 +889,12 @@ sendFrendRequest = (e)=>{
                       <form onSubmit={this.sendFrendRequest}>
             
                         <div className="col-sm-12 col-xs-12 reply-main chatstyless">
-                          <input type="submit" value="Send friend request" style={{ background:"#009688"}} className="form-control"  id="chat-message-input" ></input>
+                        {this.state.isLoading ? (
+                          <button type="submit" style={{ background:"#009688"}} className="form-control"  id="chat-message-input" disabled><i class="fa fa-spinner fa-spin" ></i></button>
+                        ):
+                        <input type="submit" value="Send friend request" style={{ background:"#009688"}} className="form-control"  id="chat-message-input" ></input>
+                        }
+                          
                         </div>
                         
                       </form>
@@ -845,8 +920,12 @@ sendFrendRequest = (e)=>{
                       
                     
                     <div className="col-sm-12 col-xs-12 reply-main chatstyless">
+                    {this.state.isLoading ? (
+                        <button type="submit" value="Accept friend request" style={{ background:"#009688"}} className="form-control"  id="chat-message-input" disabled><i class="fa fa-spinner fa-spin" ></i></button>
+                        ):
                       <input type="submit" value="Accept friend request" style={{ background:"#009688"}} className="form-control"  id="chat-message-input" ></input>
-                    </div>
+                    }
+                      </div>
                     
                   </form>
                   </div>
@@ -859,7 +938,12 @@ sendFrendRequest = (e)=>{
                       
                     
                     <div className="col-sm-12 col-xs-12 reply-main chatstyless">
-                      <input type="submit" value="Cancel friend request" style={{ background:"red"}} className="form-control"  id="chat-message-input" ></input>
+                    {this.state.isLoading ? (
+                        <button type="submit" value="Cancel friend request" style={{ background:"red"}} className="form-control"  id="chat-message-input" disabled><i class="fa fa-spinner fa-spin" ></i></button>
+                        ):
+                        <input type="submit" value="Cancel friend request" style={{ background:"red"}} className="form-control"  id="chat-message-input" ></input>
+                    }
+                      
                     </div>
                     
                   </form>
@@ -968,7 +1052,12 @@ sendFrendRequest = (e)=>{
                 
               
               <div className="col-sm-12 col-xs-12 reply-main chatstyless">
-                <input type="submit" value="Join Channel" style={{ background:"#009688"}} className="form-control"  id="chat-message-input" ></input>
+              {this.state.isLoading ? (
+                        <button type="submit" value="Join Channel" style={{ background:"#009688"}} className="form-control"  id="chat-message-input" disabled><i class="fa fa-spinner fa-spin" ></i></button>
+                        ):
+                        <input type="submit" value="Join Channel" style={{ background:"#009688"}} className="form-control"  id="chat-message-input" ></input>
+                    }
+                
               </div>
               
             </form>
@@ -1036,14 +1125,16 @@ sendFrendRequest = (e)=>{
     render(){
       if(this.props.token){
         const msg = this.state.messages;
+        const { isLoading } = this.state;
         return(
           <>
-           
-           <div className="container app chatstyless">
+          
+            <div className="container app chatstyless">
             <div className="row app-one ">
                 
             <Sidepanel history ={this.props.history} />
               <div className="col-sm-8 conversation chatstyless">
+              
                 {this.state.objectexist && 
                    this.navHeader()
                 }
@@ -1089,9 +1180,7 @@ sendFrendRequest = (e)=>{
                   <div className="">
                     
                     <div className="message-text">
-                    <div style={{ float:"left", clear: "both" }}
-                          ref={(el) => { this.messagesEnd = el; }}>
-                    </div>
+                    <div ref={this.messagesEndRef} />
                     </div>
                     
                   </div>
@@ -1125,19 +1214,26 @@ sendFrendRequest = (e)=>{
               </div>
             </div>
           </div>
+            
+            
+           
+          
           <Modal
                   show={this.state.chatModal}
-                  onHide={()=>this.setState({chatModal:false,cropedImage:null})}
+                  onHide={()=>this.setState({chatModal:false,cropedImage:null,isLoading: false})}
                   container={this}
                   aria-labelledby="contained-modal-title"
                   bsSize = "sm"
                 >
                   <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title">
-                      
+                      Edit channel
                     </Modal.Title>
                   </Modal.Header>
-                  <ModalBody >
+                  {isLoading ? (
+                      <>
+                      <ModalBody >
+                    
                     <div className='row'>
                       <div className='col-xs-3'>
                       <div className="heading-avatar-icon chatstyless">
@@ -1176,10 +1272,10 @@ sendFrendRequest = (e)=>{
                       <div className='col-xs-9'>
                       <div className="form-group">
                           <label htmlFor="usr">Channels Name:</label>
-                          <input type="text" onChange={(e)=>this.setState({chat_name:e.target.value})} value={this.state.chat_name} className="form-control" id="usr" required />
+                          <input type="text" onChange={(e)=>this.setState({chat_name:e.target.value})} value={this.state.chat_name} className="form-control" id="usr" required disabled/>
                         </div>
                       <label htmlFor="fileInput" className="custom-file-upload">
-                        <input id="fileInput" onChange={this.handleCropChangeChannel}  type="file" />
+                        <input id="fileInput" onChange={this.handleCropChangeChannel}  type="file" disabled/>
                         
                       </label>
                       </div>
@@ -1190,10 +1286,72 @@ sendFrendRequest = (e)=>{
                   <Modal.Footer>
                  
                     <form onSubmit={this.uploadChannelProfile} >
-                    <button type='submit' className='btn btn-primary'>upload</button>
+                    <button type='submit' className='btn btn-primary' disabled><i class="fa fa-spinner fa-spin" ></i></button>
                  
                      </form>    
-                  </Modal.Footer>
+                  </Modal.Footer></>
+                    ):
+                    <>
+                    <ModalBody >
+                  
+                  <div className='row'>
+                    <div className='col-xs-3'>
+                    <div className="heading-avatar-icon chatstyless">
+                     
+                    {this.state.cropedImage? 
+                      <>
+                      <img src={`${this.state.cropedImage}`} />
+                      <a href='#' className='text-danger float-start'>Delete photo</a>
+                      </>
+                      
+                      :
+                      <>
+                      {this.state.navImage? 
+                        <>
+                        <img src={`${this.state.navImage}`} />
+                       <a href='#' className='text-danger float-start'>Delete photo</a>
+                        </>
+                      :
+                      <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png" />
+                      }
+                      </>
+                      
+                       
+                        
+                     
+                      }
+                      
+                     
+                      
+                      
+                      
+                    </div>
+                    
+                    </div>
+                    
+                    <div className='col-xs-9'>
+                    <div className="form-group">
+                        <label htmlFor="usr">Channels Name:</label>
+                        <input type="text" onChange={(e)=>this.setState({chat_name:e.target.value})} value={this.state.chat_name} className="form-control" id="usr" required />
+                      </div>
+                    <label htmlFor="fileInput" className="custom-file-upload">
+                      <input id="fileInput" onChange={this.handleCropChangeChannel}  type="file" />
+                      
+                    </label>
+                    </div>
+                    
+                  </div>
+                
+                </ModalBody>
+                <Modal.Footer>
+               
+                  <form onSubmit={this.uploadChannelProfile} >
+                  <button type='submit' className='btn btn-primary'>upload</button>
+               
+                   </form>    
+                </Modal.Footer></>
+                    }
+                  
               </Modal>
 
               <Modal
@@ -1267,7 +1425,7 @@ sendFrendRequest = (e)=>{
                       </div>
                       
                       <div className='col-xs-9'>
-                        <NavLink to={`http://localhost:3000/f${data["author"]}/`}>
+                        <NavLink to={`/f${data["author"]}/`}>
                         <strong>{data["author"]} {this.state.admins.map(ptp => this.checkAdmin(data["author"],ptp))}</strong>  
                         </NavLink>
                         
@@ -1337,65 +1495,97 @@ sendFrendRequest = (e)=>{
       </Modal.Footer>
     </Modal>
     <Modal
-                  show={this.state.exitGroupModal}
-                  onHide={()=>this.setState({exitGroupModal:false})}
-                  container={this}
-                  aria-labelledby="contained-modal-title"
-                  bsSize = "sm"
-                >
-                  <Modal.Header closeButton>
-                    <Modal.Title id="contained-modal-title">
-                      are you sure you want to exit group
-                    </Modal.Title>
-                  </Modal.Header>
-                  <ModalBody >
-                   
-                   <button onClick={()=>this.setState({exitGroupModal:false})} className='btn btn-success'>NO</button>  <button onClick={this.exitChanel} className='btn btn-secondary'>YES</button>
+        show={this.state.exitGroupModal}
+        onHide={()=>this.setState({exitGroupModal:false,isLoading: false})}
+        container={this}
+        aria-labelledby="contained-modal-title"
+        bsSize = "sm"
+      >
+                 
+          <Modal.Header closeButton>
+            <Modal.Title id="contained-modal-title">
+              are you sure you want to exit group
+            </Modal.Title>
+          </Modal.Header>
+          {isLoading ? (
+                    <ModalBody >
+            
+                    <button onClick={()=>this.setState({exitGroupModal:false})} className='btn btn-success' disabled>NO</button>  <button onClick={this.exitChanel} className='btn btn-secondary' disabled><i class="fa fa-spinner fa-spin" ></i></button>
                   </ModalBody>
+                  ):
+                  <>
+          <ModalBody >
+            
+            <button onClick={()=>this.setState({exitGroupModal:false})} className='btn btn-success'>NO</button>  <button onClick={this.exitChanel} className='btn btn-secondary'>YES</button>
+          </ModalBody>
+          </>
+          }
+                  
                  
     </Modal>
     
     <Modal
                   show={this.state.restrictUserModal}
-                  onHide={()=>this.setState({restrictUserModal:false})}
+                  onHide={()=>this.setState({restrictUserModal:false,isLoading: false})}
                   container={this}
                   aria-labelledby="contained-modal-title"
                   bsSize = "sm"
                 >
-                  <Modal.Header closeButton>
+                 
+                    <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title">
                       are you sure you want to Restrict <strong>{this.state.userToRestrict}</strong>? 
                     </Modal.Title>
                   </Modal.Header>
+                  {isLoading ? (
+                       <ModalBody >
+                   
+                       <button onClick={()=>this.setState({restrictUserModal:false})} className='btn btn-secondary' disabled>NO</button>  <button onClick={this.sendRestrictrequest} className='btn btn-success ' disabled><i class="fa fa-spinner fa-spin" ></i></button>
+                      </ModalBody>
+                    ):
+                    <>
                   <ModalBody >
                    
                    <button onClick={()=>this.setState({restrictUserModal:false})} className='btn btn-secondary'>NO</button>  <button onClick={this.sendRestrictrequest} className='btn btn-success '>YES</button>
                   </ModalBody>
+                    </>
+                  }
+                  
                  
     </Modal>
 
     <Modal
         show={this.state.unrestrictUserModal}
-        onHide={()=>this.setState({unrestrictUserModal:false})}
+        onHide={()=>this.setState({unrestrictUserModal:false,isLoading: false})}
         container={this}
         aria-labelledby="contained-modal-title"
         bsSize = "sm"
         >
-        <Modal.Header closeButton>
+       
+            <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title">
             are you sure you want to Unrestrict <strong>{this.state.userToRestrict}</strong>? 
           </Modal.Title>
         </Modal.Header>
+        {isLoading ? (
+          <ModalBody >
+          
+          <button onClick={()=>this.setState({unrestrictUserModal:false})} className='btn btn-secondary' disabled>NO</button>  <button onClick={this.sendUnRestrictrequest} className='btn btn-success ' disabled><i class="fa fa-spinner fa-spin" ></i></button>
+        </ModalBody>
+        ):
+        <>
         <ModalBody >
           
           <button onClick={()=>this.setState({unrestrictUserModal:false})} className='btn btn-secondary'>NO</button>  <button onClick={this.sendUnRestrictrequest} className='btn btn-success '>YES</button>
         </ModalBody>
-                 
+        </>
+        }
+                     
     </Modal>
     
     <Modal
         show={this.state.blockUserModal}
-        onHide={()=>this.setState({blockUserModal:false})}
+        onHide={()=>this.setState({blockUserModal:false,isLoading:false})}
         container={this}
         aria-labelledby="contained-modal-title"
         bsSize = "sm"
@@ -1405,10 +1595,18 @@ sendFrendRequest = (e)=>{
             are you sure you want to block this user
           </Modal.Title>
         </Modal.Header>
+        {isLoading ? (
+          <ModalBody >
+          
+          <button onClick={()=>this.setState({blockUserModal:false})} className='btn btn-secondary' disabled>NO</button>  <button onClick={this.sendBlockUserrequest} className='btn btn-success ' disabled><i class="fa fa-spinner fa-spin" ></i></button>
+        </ModalBody>
+        ):
         <ModalBody >
           
-          <button onClick={()=>this.setState({blockUserModal:false})} className='btn btn-secondary'>NO</button>  <button onClick={this.sendBlockUserrequest} className='btn btn-success '>YES</button>
-        </ModalBody>
+        <button onClick={()=>this.setState({blockUserModal:false})} className='btn btn-secondary'>NO</button>  <button onClick={this.sendBlockUserrequest} className='btn btn-success '>YES</button>
+      </ModalBody>
+        }
+       
                  
     </Modal>
     <Modal
@@ -1423,10 +1621,18 @@ sendFrendRequest = (e)=>{
             are you sure you want to unblock this user
           </Modal.Title>
         </Modal.Header>
+        {isLoading ? (
+          <ModalBody >
+          
+          <button onClick={()=>this.setState({unblockUserModal:false})} className='btn btn-secondary' disabled>NO</button>  <button onClick={this.sendunBlockUserrequest} className='btn btn-success ' disabled><i class="fa fa-spinner fa-spin" ></i></button>
+        </ModalBody>
+        ):
         <ModalBody >
           
-          <button onClick={()=>this.setState({unblockUserModal:false})} className='btn btn-secondary'>NO</button>  <button onClick={this.sendunBlockUserrequest} className='btn btn-success '>YES</button>
-        </ModalBody>
+        <button onClick={()=>this.setState({unblockUserModal:false})} className='btn btn-secondary'>NO</button>  <button onClick={this.sendunBlockUserrequest} className='btn btn-success '>YES</button>
+      </ModalBody>
+        }
+       
                  
     </Modal>
           </>
@@ -1466,3 +1672,18 @@ const mapDispatchToProps = dispatch =>{
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(Chat);
+
+
+
+
+
+
+
+/*
+{isLoading ? (
+  <div className="spinner-overlay">
+    <div className="spinner" />
+  </div>
+):
+}
+*/
