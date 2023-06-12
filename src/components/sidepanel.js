@@ -9,7 +9,7 @@ import * as actions from '../store/actions/nav';
 import * as actionsauth from '../store/actions/auth'
 import Addchat from './Popup';
 import Cropper from 'react-easy-crop';
-import {Modal,Button,ModalBody} from 'react-bootstrap'
+import {Modal,Button,ModalBody,FormGroup,InputGroup,FormControl} from 'react-bootstrap'
 import getCroppedImg  from './utils/cropimage'
 
 
@@ -151,6 +151,16 @@ deleteProfileImage =()=>{
       console.log(cropedareapicxxels)
       this.setState({croppedAreaPixels:cropedareapicxxels})
     };
+
+    copyProfilelink=()=>{
+      let prof = `https://demo-webchatapp/f${this.props.username}`
+       // Copy the text inside the text field
+       navigator.clipboard.writeText(prof);
+
+       // Alert the copied text
+       alert("Copied the text: " + prof);
+       }
+    
 
     
     getUserChats = (username,token)=>{
@@ -609,6 +619,7 @@ rejectingRequest(sender){
              
              
              <Addchat showaddchat={this.props.showaddchat} hide={()=> this.closeChatPopup()} history={this.props.history} />
+            
              <Modal
                   show={this.state.openModal}
                   onHide={()=>this.setState({openModal:false,cropedImage:null,isLoading: false})}
@@ -661,6 +672,23 @@ rejectingRequest(sender){
                       </div>
                       
                     </div>
+                                      
+                  <>
+                  <br />
+                     
+                     <p className="">your profile link:</p>
+                  {this.props.username &&
+                     <FormGroup>
+                     <InputGroup>
+                       <FormControl type="text" value={`https://demo-webchatapp/f${this.props.username}`} readOnly />
+                       <InputGroup.Addon onClick={this.copyProfilelink}><i className="fa fa-copy"></i></InputGroup.Addon>
+                     </InputGroup>
+                   </FormGroup>
+
+                  }
+                  
+                    
+                  </>
                   
                   </ModalBody>
                   <Modal.Footer>
@@ -711,6 +739,20 @@ rejectingRequest(sender){
                       </div>
                       
                     </div>
+                    <>
+                    <br />
+                     
+                     <p className="">your profile link:</p>
+                  {this.props.username &&
+                     <FormGroup>
+                     <InputGroup>
+                       <FormControl type="text" value={`https://demo-webchatapp/f${this.props.username}`} readOnly />
+                       <InputGroup.Addon onClick={this.copyProfilelink}><i className="fa fa-copy"></i></InputGroup.Addon>
+                     </InputGroup>
+                   </FormGroup>
+
+                  }
+                  </>
                   
                   </ModalBody>
                   <Modal.Footer>
